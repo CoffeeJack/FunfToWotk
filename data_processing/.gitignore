@@ -1,0 +1,8 @@
+.project
+.pydevproject
+
+merged*
+uploads*
+*.pyc
+py*
+Crypto
