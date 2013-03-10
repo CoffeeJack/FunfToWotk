@@ -6,3 +6,22 @@ body {
 a {
   color: #00B7FF;
 }
+
+p.level_1 {
+	font-size: 160%;
+}
+
+p.level_2 {
+	font-size: 140%;
+	margin-left: 30px;
+}
+
+p.level_3 {
+	font-size: 120%;
+	margin-left: 60px;
+}
+
+p.level_4 {
+	font-size: 100%;
+	margin-left: 90px;
+}

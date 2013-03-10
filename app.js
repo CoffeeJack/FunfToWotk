@@ -8,6 +8,8 @@ var express = require('express')
   , upload = require('./routes/upload')
   , db = require('./routes/db')
   , forward = require('./routes/forward')
+  , rt = require('./routes/realtime')
+  , settings = require('./routes/settings')
   , http = require('http')
   , path = require('path');
 
@@ -34,7 +36,11 @@ app.get('/', routes.index);
 app.post('/upload',upload.savefile);
 app.get('/db',db.db);
 app.get('/forward',forward.forward);
-app.get('/query',forward.query);
+app.post('/rt',rt.realtime_upload);
+app.post('/settings',settings.newprobe);
+app.get('/settings',settings.getprobes);
+app.get('/settings/default',settings.set_defaults);
+app.post('/settings/update',settings.update_probe);
 
 //garbage cleanup, set to hourly
 setInterval(function(){
@@ -78,6 +84,11 @@ var cleanUploadFolder = function(path) {
 };
 
 var cleanRootFolder = function(path) {
+
+  var time = new Date();
+
+  console.log("cleaning main folder...at "+time);
+
   if( fs.existsSync(path) ) {
     fs.readdirSync(path).forEach(function(file,index){
       var curPath = path + "/" + file;

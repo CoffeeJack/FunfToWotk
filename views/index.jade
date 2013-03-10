@@ -1,5 +1,41 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+	h1= title
+	p Welcome to #{title}
+	
+	div(id="main_container")
+		h2 Registered Devices
+		select(class="probe_list")
+			option(class="probe") Pick a Device
+		div(id="settings_container")
+
+	script
+		$(document).on("ready",function(event){
+
+			$(".probe_list").on("change",function(event){
+				//console.log($(event.target).val());
+
+				active_probe = $(event.target).val();
+
+				$('#settings_container').empty();
+				$('#settings_container').attr("value",probe_list[$(event.target).val()]._id);
+				explore(probe_list[$(event.target).val()],1,null);
+			});
+
+			$.getJSON("/settings",function(res){
+				//console.log(res);
+
+				probe_list = res;
+
+				for(var i = 0; i < res.length; i++){
+					$(".probe_list").append(
+						$(document.createElement("option")).addClass("probe").attr("value",i).append(res[i]._id)
+					);
+				};
+
+			});
+		});
+
+
+

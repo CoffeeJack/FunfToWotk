@@ -54,14 +54,6 @@ exports.db = function(req,res){
 
 	});
 
-
-	//console.log("done!");
-
-	//deleteFolderRecursive('.');
-	//wotk.forward_data(data_to_forward);
-
-	//MongoClient.close();
-
 };
 
 
@@ -95,6 +87,7 @@ exports.save_data_to_db = function(){
 
 function insertData(db,table,rec){
 	//console.log(rec);
+	var wait_time = 3000;
 
 	db.collection(table).insert(rec,{safe:true},function(err,records){
 		if(err){
@@ -108,32 +101,44 @@ function insertData(db,table,rec){
 				if(loc_timer) clearTimeout(loc_timer);	
 				loc_timer = setTimeout(function(){
 					wotk.format_data(location_data,table);
-					//location_data = []; //empties the array
-				},3000);
+					db.close();
+				},wait_time);
 
 			}else if(table=='AccelerometerSensorProbe'){
 
 				accelerometer_data.push(records[0]);
 				if(accel_timer) clearTimeout(accel_timer);	
-				accel_timer = setTimeout(function(){wotk.format_data(accelerometer_data,table);},3000);
+				accel_timer = setTimeout(function(){
+					wotk.format_data(accelerometer_data,table);
+					db.close();
+				},wait_time);
 
 			}else if(table=='ActivityProbe'){
 
 				activity_data.push(records[0]);
 				if(activity_timer) clearTimeout(activity_timer);	
-				activity_timer = setTimeout(function(){wotk.format_data(activity_data,table);},3000);
+				activity_timer = setTimeout(function(){
+					wotk.format_data(activity_data,table);
+					db.close();
+				},wait_time);
 
 			}else if(table=='CallLogProbe'){
 
 				call_data.push(records[0]);
 				if(call_timer) clearTimeout(call_timer);	
-				call_timer = setTimeout(function(){wotk.format_data(call_data,table);},3000);
+				call_timer = setTimeout(function(){
+					wotk.format_data(call_data,table);
+					db.close();
+				},wait_time);
 
 			}else if(table=='SMSProbe'){
 
 				sms_data.push(records[0]);
 				if(sms_timer) clearTimeout(sms_timer);	
-				sms_timer = setTimeout(function(){wotk.format_data(sms_data,table);},3000);
+				sms_timer = setTimeout(function(){
+					wotk.format_data(sms_data,table);
+					db.close();
+				},wait_time);
 
 			}
 		} 

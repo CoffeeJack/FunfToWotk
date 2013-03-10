@@ -1,0 +1,2 @@
+﻿id,device,timestamp,configUpdatePeriod,configUpdateUrl,dataArchivePeriod,dataRequests_edu.mit.media.funf.probe.builtin.LocationProbe_DURATION,dataRequests_edu.mit.media.funf.probe.builtin.LocationProbe_PERIOD,dataUploadPeriod,dataUploadUrl,name,version
+0aadc64d-f776-48a2-83f5-d959ade6b57c-1,8ffa2244-c5dc-4ae3-b9c3-8c593440edd8,1362776871617,10800,,3600,30,60,3600,http://192.168.1.105:9000/upload,WifiScanner,1

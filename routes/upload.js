@@ -86,7 +86,7 @@ function merge(){
 		    if(stderr) sys.print('\nstderr: ' + stderr);
 		    if (error !== null) console.log('\nexec error: ' + error);
 
-		    db2csv('find . -maxdepth 1 -name "*.db" -exec python ./data_processing/db2csv.py {} . \\;');
+		    db2csv('find . -maxdepth 1 -name "*.db" -exec python ./data_processing/db2csv.py {} . \;');
 
 		    // setTimeout(function(){
 		    // 	db2csv('find . -maxdepth 1 -name "*.db" -exec python ./data_processing/db2csv.py {} . \;');
@@ -104,9 +104,11 @@ function db2csv(command){
 	child = exec(command, 
 	  function (error, stdout, stderr) {
 	    sys.print('\nstdout: ' + stdout);
-	    if(stderr) sys.print('\nstderr: ' + stderr);
+	    if(stderr) {
+	    	sys.print('\nstderr: ' + stderr);
+	    }
 	    if (error !== null) console.log('\nexec error: ' + error);
 
-	    db.save_data_to_db();
+	    //db.save_data_to_db();
 	});
 };
