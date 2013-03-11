@@ -5,15 +5,35 @@ block content
 	p Welcome to #{title}
 	
 	div(id="main_container")
+		button(id="new_probe_button") Add New Probe
+		button(id="del_probe_button") Delete Old Probe
+
 		h2 Registered Devices
-		select(class="probe_list")
+		select(id="main_list", class="probe_list")
 			option(class="probe") Pick a Device
 		div(id="settings_container")
+
+	div(id="new_probe_container")
+		h2 Add New Probe
+		input(id="new_probe_id",name="probe_id", class="text_box_1", placeholder="Device ID")
+		select(id="new_probe_type",class="default_probe_list")
+			option(class="probe") Pick a Device
+		p(id="err_msg_1",hidden="true",style="color : red") You Must Enter a Device Number
+		p(id="err_msg_2",hidden="true",style="color : red") You Must Pick a Type of Probe
+		button(id="new_probe_submit") Submit
+
+	div(id="del_probe_container")
+		h2 Delete Old Probe
+		select(id="del_probe_type",class="probe_list")
+			option(class="probe") Pick a Device
+		p(id="err_msg_3",hidden="true",style="color : red") Cannot Delete a Default Probe
+		p(id="err_msg_4",hidden="true",style="color : red") You Must Pick a Probe
+		button(id="del_probe_submit") Submit
 
 	script
 		$(document).on("ready",function(event){
 
-			$(".probe_list").on("change",function(event){
+			$("#main_list").on("change",function(event){
 				//console.log($(event.target).val());
 
 				active_probe = $(event.target).val();
@@ -35,6 +55,88 @@ block content
 				};
 
 			});
+
+			$( "#new_probe_button" ).button().click(function( event ) {
+				event.preventDefault();
+
+				//load default devices
+				var def_devices = getProbeList();
+
+				def_devices.forEach(function(val){
+					$(".default_probe_list").append(
+						$(document.createElement("option")).addClass("probe").attr("value",val).append(val)
+					);
+				});
+
+				$( "#new_probe_container" ).dialog().parent().toggle();
+				$("#new_probe_id").removeAttr("style");
+				$("#new_probe_type").removeAttr("style");
+				$("#err_msg_1").hide();
+				$("#err_msg_2").hide();
+			});
+
+			$( "#del_probe_button" ).button().click(function( event ) {
+				event.preventDefault();
+				$( "#del_probe_container" ).dialog().parent().toggle();
+				$("#del_probe_type").removeAttr("style");
+				$("#err_msg_3").hide();
+				$("#err_msg_4").hide();				
+			});
+
+			$( "#new_probe_container" ).dialog().parent().hide().css("width","350px");
+			$( "#del_probe_container" ).dialog().parent().hide().css("width","350px");
+
+			$("#new_probe_submit").click(function(event){
+				event.preventDefault();
+
+				if($("#new_probe_id").val()!="" && $("#new_probe_type").val() != "Pick a Device"){
+					$( "#new_probe_container" ).dialog().parent().toggle();
+
+					$.post('/settings',{id : $("#new_probe_id").val(), type : $("#new_probe_type").val()}, function(req,res){
+
+					});
+
+				}else{
+					if($("#new_probe_id").val()==""){
+						$("#new_probe_id").css("border","3px double").css("border-color","red");
+						$("#err_msg_1").toggle();
+					}
+
+					if($("#new_probe_type").val() == "Pick a Device"){
+						$("#new_probe_type").css("border","3px double").css("border-color","red");
+						$("#err_msg_2").toggle();
+					}
+				}
+			});
+
+			$("#del_probe_submit").click(function(event){
+				event.preventDefault();
+
+				console.log($("#del_probe_type").val());
+
+				if($("#del_probe_type").val() != "Pick a Device"){
+
+					$( "#del_probe_container" ).dialog().parent().toggle();
+	
+					console.log("here");
+
+					$.post('/settings/del',{id : probe_list[$("#del_probe_type").val()]._id}, function(req,res){
+						console.log("ok");
+					});
+
+				}else{
+					//- if((probe_list[$("#del_probe_type").val()].type).indexOf("_") <= 0){
+					//- 	$("#del_probe_type").css("border","3px double").css("border-color","red");
+					//- 	$("#err_msg_3").toggle();
+					//- }
+
+					if($("#del_probe_type").val() == "Pick a Device"){
+						$("#del_probe_type").css("border","3px double").css("border-color","red");
+						$("#err_msg_4").toggle();
+					}
+				}
+			});
+
 		});
 
 

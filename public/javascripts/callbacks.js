@@ -64,3 +64,40 @@ function update(field,val){
 
 	//console.log(probe + field + val);
 }
+
+function getProbeList(){
+	var list = new Array("LocationProbe",
+		"BluetoothProbe",
+		"WifiProbe",
+		"CellProbe",
+		"ContactProbe",
+		"CallLogProbe",
+		"SMSProbe",
+		"AccelerometerSensorProbe",
+		"GravitySensorProbe",
+		"LinearAccelerationProbe",
+		"GyroscopeSensorProbe",
+		"OrientationSensorProbe",
+		"RotationVectorSensorProbe",
+		"ActivityProbe",
+		"LightSensorProbe",
+		"ProximitySensorProbe",
+		"MagneticFieldSensorProbe",
+		"PressureSensorProbe",
+		"TemperatureSensorProbe",
+		"AndroidInfoProbe",
+		"BatteryProbe",
+		"HardwareInfoProbe",
+		"TimeOffsetProbe",
+		"TelephonyProbe",
+		"RunningApplicationsProbe",
+		"ApplicationsProbe",
+		"ScreenProbe",
+		"BrowserBookmarksProbe",
+		"BrowserSearchesProbe",
+		"VideosProbe",
+		"AudioFilesProbe",
+		"ImagesProbe");
+
+	return list;
+}

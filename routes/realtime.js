@@ -105,13 +105,19 @@ function format_data_rt(data){
 												//to do...aggregation is needed
 
 											}else{
+												//console.log(index_lv3);
 												lv_3_arr[index_lv3] = data[index_lv1][index_lv2][index_lv3];
 											}
 										}
 									}
 								}
 
-								if(lv_3_arr.length>1) lv_2_arr[index_lv2] = lv_3_arr;
+								if(typeof lv_3_arr === 'object'){
+									if(Object.keys(lv_3_arr).length>1){
+										lv_2_arr[index_lv2] = lv_3_arr;
+										//lv_2_arr[index_lv2] = new Array(lv_3_arr);
+									}		
+								}
 
 							}else{
 								if(params['settings'][index_lv1][index_lv2]){
@@ -120,6 +126,7 @@ function format_data_rt(data){
 										//to do...aggregation is needed
 
 									}else{
+										//console.log(index_lv2);
 										lv_2_arr[index_lv2] = data[index_lv1][index_lv2];
 									}
 									
@@ -127,7 +134,12 @@ function format_data_rt(data){
 							}
 						}
 
-						if(lv_2_arr.length>1) body[index_lv1] = lv_2_arr;
+						if(typeof lv_2_arr === 'object'){
+							if(Object.keys(lv_2_arr).length>1){
+								body[index_lv1] = lv_2_arr;
+								//body[index_lv1] = new Array(lv_2_arr);
+							}		
+						}
 
 					}else{
 						//if set to true
@@ -142,6 +154,7 @@ function format_data_rt(data){
 								}
 
 							}else{
+								//console.log(index_lv1);
 								if(index_lv1!='TIMESTAMP') body[index_lv1] = data[index_lv1];
 							}
 						}
@@ -200,7 +213,7 @@ function send_data_rt(user, probeType, device_id, data_array){
 
 	//sensor_name = type.toLowerCase() + '_' + device;
 
-	console.log(body);
+	//console.log(body);
 
 	var headers = {
 	  'Content-Type': 'application/x-www-form-urlencoded',

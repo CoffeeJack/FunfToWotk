@@ -126,7 +126,7 @@ exports.update_probe = function(req,res){
 				},
 				tail : function(callback){
 					res.end();
-					//db.close();
+					//db.close(); //cannot close DB at this point
 				}
 			});
 		}
@@ -234,23 +234,25 @@ exports.newprobe = function(req,res){
   		}
 		else{
 			console.log("connected to DB!");
-			console.log(req.body);
+			//console.log(req.body);	
 
-			var input = {	_id : req.body.type.toLowerCase()+'_'+req.body.device,
-							type : req.body.type,
-							device : req.body.device,
-							settings : get_default(req.body.type)
-						};
-
-			var inputJSON = JSON.stringify(input);			
-
-			if(req.body.type && req.body.device){
+			if(req.body.id && req.body.type){
 				async.series({
 					head : function(callback){
 						res.writeHead(200, {"Content-Type": "text/html"});
 						callback(null);
 					},
 					mid : function(callback){
+
+						//console.log(req.body.id + req.body.type);
+
+						var input = get_default_settings(req.body.type);
+
+						input['_id'] = req.body.type+'_'+req.body.id;
+						input['device'] = req.body.id;
+
+						//console.log(input);
+
 						db.collection('settings').insert(input,function(err,result){
 							if(err){
 								console.log("DB error");
@@ -262,7 +264,9 @@ exports.newprobe = function(req,res){
 								res.write("inserted!");
 								callback(null);
 							}
-						});					
+						});	
+
+						callback(null);				
 					},
 					tail : function(callback){
 						res.end();
@@ -277,6 +281,61 @@ exports.newprobe = function(req,res){
 		}
 	});
 }
+
+exports.delete_probe = function(req,res){
+
+	MongoClient.connect("mongodb://localhost:27017/funftowotk", function(err, db) {
+  		if(err){
+  			console.log(err);
+  		}
+		else{
+			console.log("connected to DB!");
+			//console.log(req.body);	
+
+			if(req.body.id){
+				async.series({
+					head : function(callback){
+						res.writeHead(200, {"Content-Type": "text/html"});
+						callback(null);
+					},
+					mid : function(callback){
+
+						console.log(req.body.id);
+
+						if(req.body.id.indexOf("_")>0){
+							db.collection('settings').remove({_id:req.body.id},function(err,result){
+								if(err){
+									console.log("DB error");
+									callback(null);
+								}
+								else{
+									console.log("removed!!");
+
+									res.write("removed!!");
+									callback(null);
+								}
+							});	
+						}else{	
+							console.log("cannot delete default");						
+							callback(null);
+						}
+
+						//callback(null);				
+					},
+					tail : function(callback){
+						res.end();
+						db.close();
+					}
+				});	
+			}else{
+				res.writeHead(500, {"Content-Type": "text/html"});
+				res.end();
+				db.close();
+			}
+		}
+	});
+}
+
 
 function get_default_settings(probe_type){
 

@@ -41,6 +41,7 @@ app.post('/settings',settings.newprobe);
 app.get('/settings',settings.getprobes);
 app.get('/settings/default',settings.set_defaults);
 app.post('/settings/update',settings.update_probe);
+app.post('/settings/del',settings.delete_probe);
 
 //garbage cleanup, set to hourly
 setInterval(function(){
