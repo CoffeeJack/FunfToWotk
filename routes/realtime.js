@@ -106,7 +106,8 @@ function format_data_rt(data){
 
 											}else{
 												//console.log(index_lv3);
-												lv_3_arr[index_lv3] = data[index_lv1][index_lv2][index_lv3];
+												//lv_3_arr[index_lv3] = data[index_lv1][index_lv2][index_lv3];
+												body[index_lv3] = data[index_lv1][index_lv2][index_lv3];
 											}
 										}
 									}
@@ -127,7 +128,8 @@ function format_data_rt(data){
 
 									}else{
 										//console.log(index_lv2);
-										lv_2_arr[index_lv2] = data[index_lv1][index_lv2];
+										//lv_2_arr[index_lv2] = data[index_lv1][index_lv2];
+										body[index_lv2] = data[index_lv1][index_lv2];
 									}
 									
 								}
@@ -213,7 +215,7 @@ function send_data_rt(user, probeType, device_id, data_array){
 
 	//sensor_name = type.toLowerCase() + '_' + device;
 
-	//console.log(body);
+	console.log(body);
 
 	var headers = {
 	  'Content-Type': 'application/x-www-form-urlencoded',

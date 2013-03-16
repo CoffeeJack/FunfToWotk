@@ -203,7 +203,8 @@ exports.format_data = function(data,type){
 												//to do...aggregation is needed
 
 											}else{
-												lv_3_arr[index_lv3] = record[index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase()+'_'+index_lv3.toLowerCase()];
+												//lv_3_arr[index_lv3] = record[index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase()+'_'+index_lv3.toLowerCase()];
+												body[index_lv3] = record[index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase()+'_'+index_lv3.toLowerCase()];
 											}
 										}
 									}
@@ -224,7 +225,8 @@ exports.format_data = function(data,type){
 									}else{
 										//console.log(index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase());
 										//console.log(record[index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase()]);
-										lv_2_arr[index_lv2] = record[index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase()];
+										//lv_2_arr[index_lv2] = record[index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase()];
+										body[index_lv2] = record[index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase()];
 									}
 									
 								}
