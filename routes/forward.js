@@ -289,7 +289,7 @@ exports.format_data = function(data,type){
 				if(timer[device_index]) clearTimeout(timer[device_index]);	
 				timer[device_index] = setTimeout(function(){
 					//var device = record.device.slice(record.device.length - 12, record.device.length)
-					console.log("sending data of device "+record.device_id+" with device index "+device_index);
+					console.log("sending "+type+" data of device "+record.device_id+" with device index "+device_index);
 					send_data(data_array[device_index],type,record.device_id);
 					
 				},timeout_duration);
