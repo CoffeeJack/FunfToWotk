@@ -10,6 +10,7 @@ var express = require('express')
   , forward = require('./routes/forward')
   , rt = require('./routes/realtime')
   , settings = require('./routes/settings')
+  , status = require('./routes/status')
   , http = require('http')
   , path = require('path');
 
@@ -33,6 +34,7 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
+app.post('/status', status.check);
 app.post('/upload',upload.savefile);
 app.get('/db',db.db);
 app.get('/forward',forward.forward);
