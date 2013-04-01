@@ -1,5 +1,7 @@
 
 var http = require("http");
+var config = require("./config");
+
 var async = require("async");
 var MongoClient = require('mongodb').MongoClient;
 var wotk = require('./forward');
@@ -17,6 +19,7 @@ exports.realtime_upload = function(req,res){
 
 	//console.log(req);
 	//console.log(req.body);
+	//console.log(config.UPLOAD_URL);
 
 	format_data_rt(req.body);
 
@@ -35,7 +38,7 @@ function format_data_rt(data){
 
 	async.waterfall([
 		function(callback){
-			MongoClient.connect("mongodb://localhost:27017/funftowotk", function(err, db) {
+			MongoClient.connect("mongodb://localhost:"+config.DB_PORT+"/"+config.DB_NAME, function(err, db) {
 		  		if(err){
 		  			console.log(err);
 		  		}
@@ -106,8 +109,8 @@ function format_data_rt(data){
 
 											}else{
 												//console.log(index_lv3);
-												//lv_3_arr[index_lv3] = data[index_lv1][index_lv2][index_lv3];
-												body[index_lv3] = data[index_lv1][index_lv2][index_lv3];
+												if(config.DATA_NESTED==true) lv_3_arr[index_lv3] = data[index_lv1][index_lv2][index_lv3];
+												else body[index_lv3] = data[index_lv1][index_lv2][index_lv3];
 											}
 										}
 									}
@@ -128,8 +131,8 @@ function format_data_rt(data){
 
 									}else{
 										//console.log(index_lv2);
-										//lv_2_arr[index_lv2] = data[index_lv1][index_lv2];
-										body[index_lv2] = data[index_lv1][index_lv2];
+										if(config.DATA_NESTED==true) lv_2_arr[index_lv2] = data[index_lv1][index_lv2];
+										else body[index_lv2] = data[index_lv1][index_lv2];
 									}
 									
 								}
@@ -225,10 +228,10 @@ function send_data_rt(user, probeType, device_id, data_array){
 	};
 
 	var options = {
-	  host: '142.103.25.37',
+	  host: config.ROOT_URL,
 	  port: 80,
 	  path: '/api/sensors/'+user+'.'+probeType+'_'+device_id+'/data',
-	  auth: '9c4389eae0f94004:af092d74889edf2c', //hardcoded key, change later
+	  auth: config.AUTH_ID+':'+config.AUTH_PW, //hardcoded key, change later
 	  //method: 'PUT',
 	  method: 'POST',
 	  headers: headers
@@ -281,10 +284,10 @@ function add_new_sensor_rt(probeType, device_id){
 	};
 
 	var options = {
-	  host: '142.103.25.37',
+	  host: config.ROOT_URL,
 	  port: 80,
 	  path: '/api/sensors',
-	  auth: '9c4389eae0f94004:af092d74889edf2c',
+	  auth: config.AUTH_ID+':'+config.AUTH_PW,
 	  method: 'POST',
 	  headers: headers
 	};

@@ -1,4 +1,5 @@
 var http = require('http');
+var config = require('./config');
 var forward = require('./forward');
 var async = require('async');
 var WoTK_ID = 'coffeejack';
@@ -26,10 +27,10 @@ exports.forward = function(req,res){
 	};
 
 	var options = {
-	  host: '142.103.25.37',
+	  host: config.ROOT_URL,
 	  port: 80,
 	  path: '/api/sensors/'+WoTK_ID+'.'+sensor_name.toLowerCase()+'_'+device+'/data',
-	  auth: '9c4389eae0f94004:af092d74889edf2c',
+	  auth: config.AUTH_ID+':'+config.AUTH_PW,
 	  method: 'PUT',
 	  headers: headers
 	};
@@ -82,10 +83,10 @@ function add_new_sensor(type,device){
 	};
 
 	var options = {
-	  host: '142.103.25.37',
+	  host: config.ROOT_URL,
 	  port: 80,
 	  path: '/api/sensors',
-	  auth: '9c4389eae0f94004:af092d74889edf2c',
+	  auth: config.AUTH_ID+':'+config.AUTH_PW,
 	  method: 'POST',
 	  headers: headers
 	};
@@ -111,9 +112,8 @@ function add_new_sensor(type,device){
 
 exports.format_data = function(data,type){
 	
-	var timeout_duration = 3000;
 	var device_list = new Array();
-	var num_of_devices = 10;
+	var num_of_devices = config.PARALLEL_UPLOADS;
 	var data_array = new Array(num_of_devices);
 
 	//allow multiple number of devices to come from 1 csv file 
@@ -131,7 +131,7 @@ exports.format_data = function(data,type){
 
 		async.waterfall([
 			function(callback){
-				MongoClient.connect("mongodb://localhost:27017/funftowotk", function(err, db) {
+				MongoClient.connect("mongodb://localhost:"+config.DB_PORT+"/"+config.DB_NAME, function(err, db) {
 			  		if(err){
 			  			console.log(err);
 			  		}
@@ -203,8 +203,8 @@ exports.format_data = function(data,type){
 												//to do...aggregation is needed
 
 											}else{
-												//lv_3_arr[index_lv3] = record[index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase()+'_'+index_lv3.toLowerCase()];
-												body[index_lv3] = record[index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase()+'_'+index_lv3.toLowerCase()];
+												if(config.DATA_NESTED==true) lv_3_arr[index_lv3] = record[index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase()+'_'+index_lv3.toLowerCase()];
+												else body[index_lv3] = record[index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase()+'_'+index_lv3.toLowerCase()];
 											}
 										}
 									}
@@ -225,8 +225,8 @@ exports.format_data = function(data,type){
 									}else{
 										//console.log(index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase());
 										//console.log(record[index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase()]);
-										//lv_2_arr[index_lv2] = record[index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase()];
-										body[index_lv2] = record[index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase()];
+										if(config.DATA_NESTED==true) lv_2_arr[index_lv2] = record[index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase()];
+										else body[index_lv2] = record[index_lv1.toLowerCase()+'_'+index_lv2.toLowerCase()];
 									}
 									
 								}
@@ -292,7 +292,7 @@ exports.format_data = function(data,type){
 					console.log("sending "+type+" data of device "+record.device_id+" with device index "+device_index);
 					send_data(data_array[device_index],type,record.device_id);
 					
-				},timeout_duration);
+				},config.DATA_GROUP_DELAY);
 
 				data_array[device_index].push(body);
 			}
@@ -325,10 +325,10 @@ function send_data(data_array,type,device){
 	};
 
 	var options = {
-	  host: '142.103.25.37',
+	  host: config.ROOT_URL,
 	  port: 80,
 	  path: '/api/sensors/'+WoTK_ID+'.'+type.toLowerCase()+'_'+device+'/data',
-	  auth: '9c4389eae0f94004:af092d74889edf2c',
+	  auth: config.AUTH_ID+':'+config.AUTH_PW,
 	  method: 'PUT',
 	  headers: headers
 	};
@@ -354,7 +354,7 @@ function send_data(data_array,type,device){
 
 	    	setTimeout(function(){
 	    		send_data(data_array,type,device);
-	    	},10000);
+	    	},config.CREATE_NEW_SENSOR_DELAY);
 
 	    }else{
 	    	console.log(type+" "+device+" Sent");

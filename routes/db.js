@@ -1,25 +1,12 @@
 
 
 var MongoClient = require('mongodb').MongoClient;
+var config = require('./config');
 var fs = require("fs"); 
-var tables = new Array('LocationProbe',
-						'AccelerometerSensorProbe',
-						'ActivityProbe',
-						'CallLogProbe',
-						'SMSProbe'); 
 var wotk = require('./forward');
 
-var location_data = new Array();
-var accelerometer_data = new Array();
-var activity_data = new Array();
-var call_data = new Array();
-var sms_data = new Array();
-
-var loc_timer;
-var accel_timer;
-var activity_timer;
-var call_timer;
-var sms_timer;
+var data_array = {};
+var timers = {};
 
 exports.db = function(req,res){
 
@@ -27,16 +14,19 @@ exports.db = function(req,res){
 	res.write("DB!");
 	res.end();
 
-	MongoClient.connect("mongodb://localhost:27017/funftowotk", function(err, db) {
+	MongoClient.connect("mongodb://localhost:"+config.DB_PORT+"/"+config.DB_NAME, function(err, db) {
 	  		if(err){
 	  			console.log(err);
 	  		}
 			else console.log("connected!");
 
 			//db.collection('locations', listAllData);			
+			var tables = config.LIST_OF_PROBES;
 
 			tables.forEach(function(table_name){
 				//console.log(name);
+
+				//data_array[table_name] = new Array();
 
 				parseCsvFile('./'+table_name+'.csv',function(err,rec){
 
@@ -59,16 +49,20 @@ exports.db = function(req,res){
 
 exports.save_data_to_db = function(){
 	
-	MongoClient.connect("mongodb://localhost:27017/funftowotk", function(err, db) {
+	MongoClient.connect("mongodb://localhost:"+config.DB_PORT+"/"+config.DB_NAME, function(err, db) {
 	  		if(err){
 	  			console.log(err);
 	  		}
 			else console.log("connected!");
 
 			//db.collection('locations', listAllData);			
+			var tables = config.LIST_OF_PROBES;
 
 			tables.forEach(function(table_name){
 				//console.log(name);
+
+				//data_array[table_name] = new Array();
+
 				parseCsvFile('./'+table_name+'.csv',function(err,rec){
 
 					if(!err){
@@ -87,7 +81,6 @@ exports.save_data_to_db = function(){
 
 function insertData(db,table,rec){
 	//console.log(rec);
-	var wait_time = 3000;
 
 	db.collection(table).insert(rec,{safe:true},function(err,records){
 		if(err){
@@ -95,52 +88,26 @@ function insertData(db,table,rec){
 		} 
 		else{
 			//console.log("Record added as "+records[0]._id);
-			if(table=='LocationProbe'){
 
-				location_data.push(records[0]);
-				if(loc_timer) clearTimeout(loc_timer);	
-				loc_timer = setTimeout(function(){
-					wotk.format_data(location_data,table);
-					db.close();
-				},wait_time);
+			//stash on array to send			
+			if(typeof data_array[table]==='undefined') data_array[table] = new Array();				
+			data_array[table].push(records[0]);
 
-			}else if(table=='AccelerometerSensorProbe'){
-
-				accelerometer_data.push(records[0]);
-				if(accel_timer) clearTimeout(accel_timer);	
-				accel_timer = setTimeout(function(){
-					wotk.format_data(accelerometer_data,table);
-					db.close();
-				},wait_time);
-
-			}else if(table=='ActivityProbe'){
-
-				activity_data.push(records[0]);
-				if(activity_timer) clearTimeout(activity_timer);	
-				activity_timer = setTimeout(function(){
-					wotk.format_data(activity_data,table);
-					db.close();
-				},wait_time);
-
-			}else if(table=='CallLogProbe'){
-
-				call_data.push(records[0]);
-				if(call_timer) clearTimeout(call_timer);	
-				call_timer = setTimeout(function(){
-					wotk.format_data(call_data,table);
-					db.close();
-				},wait_time);
-
-			}else if(table=='SMSProbe'){
-
-				sms_data.push(records[0]);
-				if(sms_timer) clearTimeout(sms_timer);	
-				sms_timer = setTimeout(function(){
-					wotk.format_data(sms_data,table);
-					db.close();
-				},wait_time);
-
+			//Set timer
+			if(timers[table]){
+				clearTimeout(timers[table]);
+				//console.log("clear");
 			}
+			timers[table] = setTimeout(function(){
+				wotk.format_data(data_array[table],table);
+				//console.log("timed out!");
+
+				//garbage collection
+				data_array[table] = new Array();
+				timers[table] = null;
+				db.close();
+			},config.DB_INSERTION_DELAY);
+
 		} 
 	});
 }
@@ -165,7 +132,7 @@ function parseCsvFile(fileName, callback){
 
 	stream.on('error',function(err){
 
-		callback('File Not Found!',null);
+		callback('File: '+fileName+' Not Found!',null);
 
 	});
 

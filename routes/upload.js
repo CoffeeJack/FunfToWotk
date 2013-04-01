@@ -2,7 +2,7 @@
 
 var http = require("http");
 var url = require("url");
-//var multipart = require("multipart");
+var config = require("./config");
 var sys = require("util");
 var fs = require("fs");  
 var exec  = require('child_process').exec,
@@ -24,10 +24,10 @@ exports.savefile = function(req,res){
 	console.log("Post request received: "+date);
 
 	//file size less than 7000 is garbage
-	if(req.files.uploadedfile.size>7000){
+	if(req.files.uploadedfile.size>config.FILTER_SIZE){
 
 		if(timer) clearTimeout(timer);	
-		timer = setTimeout(merge,10000);
+		timer = setTimeout(merge,config.UPLOAD_DELAY);
 
 		fs.readFile(req.files.uploadedfile.path, function (err, data) {
 		  // ...
@@ -86,7 +86,7 @@ function merge(){
 		    if(stderr) sys.print('\nstderr: ' + stderr);
 		    if (error !== null) console.log('\nexec error: ' + error);
 
-		    db2csv('find . -maxdepth 1 -name "*.db" -exec python ./data_processing/db2csv.py {} . \;');
+		    db2csv('find . -maxdepth 1 -name "*.db" -exec python ./data_processing/db2csv.py {} . \\;');
 
 		    // setTimeout(function(){
 		    // 	db2csv('find . -maxdepth 1 -name "*.db" -exec python ./data_processing/db2csv.py {} . \;');
@@ -109,6 +109,6 @@ function db2csv(command){
 	    }
 	    if (error !== null) console.log('\nexec error: ' + error);
 
-	    //db.save_data_to_db();
+	    db.save_data_to_db();
 	});
 };
