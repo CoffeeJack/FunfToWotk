@@ -107,6 +107,13 @@ function format_data_rt(data){
 											if(typeof data[index_lv1][index_lv2][index_lv3] === 'object'){
 												//to do...aggregation is needed
 
+											}else if(typeof data[index_lv1][index_lv2][index_lv3] === 'undefined'){
+												//array aggregated data presumed, take the 1st entry
+
+												if(config.DATA_NESTED==true) lv_3_arr[index_lv3] = data[index_lv1][index_lv2][0][index_lv3];
+												else body[index_lv3] = data[index_lv1][index_lv2][0][index_lv3];
+
+
 											}else{
 												//console.log(index_lv3);
 												if(config.DATA_NESTED==true) lv_3_arr[index_lv3] = data[index_lv1][index_lv2][index_lv3];
@@ -125,9 +132,15 @@ function format_data_rt(data){
 
 							}else{
 								if(params['settings'][index_lv1][index_lv2]){
-
+		
 									if(typeof data[index_lv1][index_lv2] === 'object'){
-										//to do...aggregation is needed
+										//to do...aggregation is needed										
+
+									}else if(typeof data[index_lv1][index_lv2] === 'undefined'){
+										//array aggregated data presumed, take the 1st entry
+
+										if(config.DATA_NESTED==true) lv_2_arr[index_lv2] = data[index_lv1][0][index_lv2];
+										else body[index_lv2] = data[index_lv1][0][index_lv2];
 
 									}else{
 										//console.log(index_lv2);
@@ -158,10 +171,17 @@ function format_data_rt(data){
 									body[index_lv1] = get_average(data[index_lv1]);
 								}
 
+							}else if(typeof data[index_lv1] === 'undefined'){
+								//array aggregated data presumed, take the 1st entry
+
+								if(index_lv1!='TIMESTAMP') body[index_lv1] = data[0][index_lv1];
+
 							}else{
 								//console.log(index_lv1);
 								if(index_lv1!='TIMESTAMP') body[index_lv1] = data[index_lv1];
+
 							}
+
 						}
 					}
 				}

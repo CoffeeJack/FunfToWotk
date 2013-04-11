@@ -255,6 +255,7 @@ exports.format_data = function(data,type){
 								//console.log(index_lv1.toLowerCase());
 								//console.log(record[index_lv1.toLowerCase()]);
 								if(index_lv1!='TIMESTAMP') body[index_lv1] = record[index_lv1.toLowerCase()];
+
 							}
 						}
 					}
