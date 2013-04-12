@@ -4,6 +4,7 @@
  */
 
 var express = require('express')
+  , config = require('./routes/config')
   , routes = require('./routes')
   , upload = require('./routes/upload')
   , db = require('./routes/db')
@@ -18,7 +19,7 @@ var fs = require("fs");
 var app = express();
 
 app.configure(function(){
-  app.set('port', process.env.PORT || 9000);
+  app.set('port', process.env.PORT || config.PORT);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.favicon());
@@ -48,11 +49,11 @@ app.post('/settings/del',settings.delete_probe);
 //garbage cleanup, set to hourly
 setInterval(function(){
   cleanUploadFolder('./uploads');
-},3600000); 
+},config.CLEAR_UPLOAD_FOLDER_INTERVAL); 
 
 setInterval(function(){
   cleanRootFolder('.');
-},3600000); 
+},config.CLEAR_ROOT_FOLDER_INTERVAL); 
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

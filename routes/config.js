@@ -2,6 +2,7 @@
 
 //GENERAL
 exports.ROOT_URL = "142.103.25.37"; //where the WoTKit is being hosted
+exports.PORT = 9000;
 exports.AUTH_ID = "9c4389eae0f94004";
 exports.AUTH_PW = "af092d74889edf2c"; 
 exports.WOTK_USER = "coffeejack";
@@ -12,13 +13,17 @@ exports.DB_PORT = "27017";
 exports.DB_NAME = "funftowotk";
 
 //UPLOAD
-exports.FILTER_SIZE = "7000"; //any file uploaded less than this size will be discarded
+exports.FILTER_SIZE = 7000; //any file uploaded less than this size will be discarded
 
 //DELAYS
 exports.DB_INSERTION_DELAY = 10000; //the time in takes between entries being entered into DB and data ready to be sent to WoTKit
 exports.CREATE_NEW_SENSOR_DELAY = 10000; //time it takes to register new sensor on WoTKit and resend the data
 exports.DATA_GROUP_DELAY = 3000; //time it takes to sense no more incoming data is of the same Probe group, and can be sent off without waiting for others
 exports.UPLOAD_DELAY = 10000; //delay it takes to sense no more incoming files are being uploaded
+
+//SCHEDULED OPS
+exports.CLEAR_UPLOAD_FOLDER_INTERVAL = 3600000;
+exports.CLEAR_ROOT_FOLDER_INTERVAL = 3600000;
 
 //SIMULTANEOUS OPS
 exports.PARALLEL_UPLOADS = 10;
